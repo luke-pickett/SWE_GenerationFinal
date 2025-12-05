@@ -43,6 +43,13 @@ public class Player : MonoBehaviour, IDamageable, IEntity
     {
         Debug.Log("Player died! Game Over!");
         GridManager.Instance.RemoveEntity(CurrentTile);
+        
+        if (RoundManager.Instance != null && GameOverManager.Instance != null)
+        {
+            int finalScore = RoundManager.Instance.GetCurrentScore();
+            GameOverManager.Instance.TriggerGameOver(finalScore);
+        }
+        
         gameObject.SetActive(false);
     }
 

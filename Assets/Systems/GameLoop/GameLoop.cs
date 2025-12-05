@@ -19,6 +19,7 @@ public class GameLoop : MonoBehaviour
     private bool _mapGeneratorInstanced = false;
     private bool _uiManagerInstanced = false;
     private bool _roundManagerInstanced = false;
+    private bool _gameOverManagerInstanced = false;
 
     private bool _mapGenerated = false;
 
@@ -54,6 +55,7 @@ public class GameLoop : MonoBehaviour
         MapGenerator.MapGeneratorInstanced += OnMapGeneratorInstanced;
         UIManager.UIManagerInstanced += OnUIManagerInstanced;
         RoundManager.RoundManagerInstanced += OnRoundManagerInstanced;
+        GameOverManager.GameOverManagerInstanced += OnGameOverManagerInstanced;
 
         MapGenerator.MapGenerated += OnMapGenerated;
         
@@ -62,6 +64,7 @@ public class GameLoop : MonoBehaviour
         if (MapGenerator.Instance != null) OnMapGeneratorInstanced();
         if (UIManager.Instance != null) OnUIManagerInstanced();
         if (RoundManager.Instance != null) OnRoundManagerInstanced();
+        if (GameOverManager.Instance != null) OnGameOverManagerInstanced();
     }
 
     void OnGridManagerInstanced()
@@ -88,6 +91,11 @@ public class GameLoop : MonoBehaviour
     {
         _roundManagerInstanced = true;
     }
+    
+    void OnGameOverManagerInstanced()
+    {
+        _gameOverManagerInstanced = true;
+    }
 
     void OnMapGenerated()
     {
@@ -97,7 +105,7 @@ public class GameLoop : MonoBehaviour
     private IEnumerator WaitForSingletons()
     {
         Debug.Log("Waiting for singletons to initialize...");
-        Debug.Log($"GridManager: {_gridManagerInstanced}, PathfindingService: {_pathfindingServiceInstanced}, MapGenerator: {_mapGeneratorInstanced}, UIManager: {_uiManagerInstanced}, RoundManager: {_roundManagerInstanced}");
+        Debug.Log($"GridManager: {_gridManagerInstanced}, PathfindingService: {_pathfindingServiceInstanced}, MapGenerator: {_mapGeneratorInstanced}, UIManager: {_uiManagerInstanced}, RoundManager: {_roundManagerInstanced}, GameOverManager: {_gameOverManagerInstanced}");
         
         while (!(_gridManagerInstanced && _pathfindingServiceInstanced && _mapGeneratorInstanced))
         {
@@ -108,7 +116,7 @@ public class GameLoop : MonoBehaviour
         
         float timeout = 2f;
         float elapsed = 0f;
-        while (!(_uiManagerInstanced && _roundManagerInstanced) && elapsed < timeout)
+        while (!(_uiManagerInstanced && _roundManagerInstanced && _gameOverManagerInstanced) && elapsed < timeout)
         {
             elapsed += Time.deltaTime;
             yield return null;
@@ -122,6 +130,11 @@ public class GameLoop : MonoBehaviour
         if (!_roundManagerInstanced)
         {
             Debug.LogWarning("RoundManager not found - rounds will not work");
+        }
+        
+        if (!_gameOverManagerInstanced)
+        {
+            Debug.LogWarning("GameOverManager not found - game over will not work");
         }
         
         Debug.Log("All singletons ready!");
