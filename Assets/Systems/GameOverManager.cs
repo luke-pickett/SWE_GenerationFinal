@@ -12,6 +12,9 @@ public class GameOverManager : MonoBehaviour
     [SerializeField] private GameData gameData;
     [SerializeField] private GameObject gameOverPanel;
 
+    [Header("High Score Upload")]
+    [SerializeField] private HighScoreUploader highScoreUploader;
+
     private bool isGameOver = false;
 
     private void Awake()
@@ -53,6 +56,18 @@ public class GameOverManager : MonoBehaviour
         }
 
         GameOver?.Invoke();
+    }
+
+    public void UploadHighScore()
+    {
+        if (highScoreUploader != null)
+        {
+            highScoreUploader.OnUploadButtonClicked();
+        }
+        else
+        {
+            Debug.LogWarning("HighScoreUploader not assigned in GameOverManager!");
+        }
     }
 
     public void RestartGame()
